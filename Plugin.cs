@@ -1,17 +1,27 @@
-﻿using BepInEx;
+using BepInEx;
 using GorillaNetworking;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace CosmeticGUI
 {
     [BepInPlugin(PluginInfo.GUID, PluginInfo.Name, PluginInfo.Version)]
     public class Plugin : BaseUnityPlugin
     {
+        private bool GUIEnabled = false;
         public Rect cosmeticsRect = new Rect(400, 10, 120, 90);
 
-        private void OnGUI()
+        private void Update()
         {
-            cosmeticsRect = GUI.Window(1, cosmeticsRect, CosmeticsWindow, $"Cosmetic GUI");
+            if (Keyboard.current.tabKey.wasPressedThisFrame) GUIEnabled = !GUIEnabled;
+        }
+
+        private void OnGUI()
+        { 
+            if (GUIEnabled)
+            {
+                cosmeticsRect = GUI.Window(1, cosmeticsRect, CosmeticsWindow, $"Cosmetic GUI");
+            }
         }
 
         private string _cosmetic;
@@ -54,7 +64,7 @@ namespace CosmeticGUI
         private void UpdateCosmetics()
         {
             var instance = CosmeticsController.instance;
-            instance.UpdateCurrencyBoard();
+            instance.UpdateCurrencyBoards();
             instance.UpdateMyCosmetics();
             instance.UpdateShoppingCart();
             instance.UpdateWardrobeModelsAndButtons();
